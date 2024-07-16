@@ -5,7 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { PassportModule } from '@nestjs/passport';
 import { CustomInfoResDto, CustomListResDto, CustomResDto } from 'src/helpers/schemas.dto';
-import { JwtStrategy } from './jwt.strategy';
+import { JwtStrategy } from './strategies/jwt.strategy';
 import { TokenBlacklist } from './entities/blacklist.entity';
 
 

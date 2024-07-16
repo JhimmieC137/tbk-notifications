@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateNotificationDto, UpdateNotificationDto } from './dto/resquests.dto';
+import { CreateNotificationDto, UpdateManyNotificationsDto, UpdateNotificationDto } from './dto/resquests.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { Repository } from 'typeorm';
@@ -80,7 +80,7 @@ export class NotificationsService {
     try {
       
       const notificationObj = await this.notificationRepository.findOne({
-        where: {id, user_id}
+        where: {user_id}
       })
 
       if (!notificationObj) {
@@ -106,11 +106,33 @@ export class NotificationsService {
     }
   }
 
-  async remove(id: string) {
+  async updateMany(user_id: string, updateManyNotificationsDto: UpdateManyNotificationsDto) {
+    try {
+      for (const notification of updateManyNotificationsDto.notifications) {
+          const notificationObj = await this.notificationRepository.findOne({
+          where: {user_id}
+        })
+
+        if (notificationObj) {
+          await this.notificationRepository.update( notificationObj.id, {
+            ...updateManyNotificationsDto
+          });
+        }
+      }
+
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async remove(user_id: string, notifictaion_id: string) {
     try {
       
       const notificationObj = await this.notificationRepository.findOne({
-        where: {id}
+        where: {
+          id: notifictaion_id,
+          user_id,
+        }
       })
 
       if (!notificationObj) {

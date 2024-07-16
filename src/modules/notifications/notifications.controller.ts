@@ -3,7 +3,7 @@ import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto, NotificationQueryDto, UpdateManyNotificationsDto, UpdateNotificationDto } from './dto/resquests.dto';
 import { CustomInfoResDto, CustomListResDto, CustomResDto } from 'src/helpers/schemas.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from './jwt-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import * as reqType from 'express';
 import { FORBIDDEN_403 } from 'src/helpers/exceptions/auth';
 import { EventPattern, Payload } from '@nestjs/microservices';
@@ -53,9 +53,9 @@ export class NotificationsController {
     response.results = notifications.notifications;
     response.total_count = notifications.totalCount;
     response.count = response.results.length;
-    response.page = notifications.page
-    response.message = 'Notifications retrieved successfully'
-    response.next_page = notifications.page + 1
+    response.page = notifications.page;
+    response.message = 'Notifications retrieved successfully';
+    response.next_page = notifications.page + 1;
     return response;
   }
 
@@ -91,7 +91,7 @@ export class NotificationsController {
   @Patch()
   async updateMany(@Request() req: reqType.Request, @Body() updateManyNotificationDto: UpdateManyNotificationsDto): Promise<CustomInfoResDto> {
     await this.checkBlacklist(req);
-    // await this.notificationsService.updateMany(id, updateNotificationDto);
+    await this.notificationsService.updateMany(req.user['id'], updateManyNotificationDto);
 
     const response = this.customInfoResDto;
     response.message = "Notifications updated successfully";
@@ -99,16 +99,16 @@ export class NotificationsController {
   }
 
   
-  // @ApiBearerAuth()
-  // @UseGuards(JwtAuthGuard)
-  // @Delete(':id')
-  // async remove(@Request() req: reqType.Request, @Param('id') id: string): Promise<CustomInfoResDto> {
-  //   await this.checkBlacklist(req);
-  //   await this.notificationsService.remove(id);
-  //   const response = this.customInfoResDto;
-  //   response.info = 'Deleted successfully';
-  //   return response;
-  // }
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @Delete(':id')
+  async remove(@Request() req: reqType.Request, @Param('id') id: string): Promise<CustomInfoResDto> {
+    await this.checkBlacklist(req);
+    await this.notificationsService.remove(req.user['id'], id);
+    const response = this.customInfoResDto;
+    response.info = 'Deleted successfully';
+    return response;
+  }
 
   // @EventPattern('blacklist_token')
   // async handleBlacklistToken(@Payload() token: string): Promise<CustomInfoResDto> {

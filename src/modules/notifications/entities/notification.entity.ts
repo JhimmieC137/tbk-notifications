@@ -14,6 +14,18 @@ export class Notification {
         nullable: false,
     })
     message: String;
+    
+    @Column({
+        nullable: false,
+        default: false,
+    })
+    seen: Boolean;
+    
+    @Column({
+        nullable: false,
+        default: false,
+    })
+    is_deleted: Boolean;
 
     @CreateDateColumn({
     nullable: true

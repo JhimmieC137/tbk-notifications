@@ -1,6 +1,4 @@
 import { Notification } from "src/modules/notifications/entities/notification.entity";
-import { User } from "src/modules/users/entities/user.entity";
-
 export class CustomInfoResDto {
   status: number = 200;
   message: string = 'Successful';
@@ -26,7 +24,7 @@ export class CustomListResDto {
   total_count: number = null;
   page: number = null;
   next_page: number = null;
-  results: User[] | Notification[] = [];
+  results: Notification[] = [];
 }
 
 export class CustomResDto {

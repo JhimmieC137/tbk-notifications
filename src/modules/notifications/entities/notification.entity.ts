@@ -1,4 +1,3 @@
-import { Profile } from "src/modules/users/entities/profile.entity";
 import { Column, CreateDateColumn, DeleteDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity('notifications')
@@ -10,9 +9,6 @@ export class Notification {
         nullable: true,
     })
     user_id: String;
-    
-    @ManyToOne(() => Profile, (profile) => profile.notifications)
-    profile: Profile
     
     @Column({
         nullable: false,

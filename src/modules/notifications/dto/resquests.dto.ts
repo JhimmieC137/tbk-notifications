@@ -1,7 +1,6 @@
-import { ApiProperty, ApiPropertyOptional, PartialType } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional, PartialType, PickType } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { IsNumber, IsOptional } from 'class-validator';
-import { Profile } from 'src/modules/users/entities/profile.entity';
 
 export class CreateNotificationDto {
     @ApiProperty({
@@ -12,15 +11,22 @@ export class CreateNotificationDto {
     @ApiProperty({
       required: true,
     })
-    profile: Profile;
-    
-    @ApiProperty({
-      required: true,
-    })
     message: String;
+  }
+  
+  export class UpdateNotificationDto extends PickType(CreateNotificationDto, ['user_id'] as const) {
+    // @ApiProperty({
+    //   required: true,
+    // })
+    // status: String;
+  }
+  
+export class UpdateManyNotificationsDto extends UpdateNotificationDto {
+  @ApiProperty({
+    required: true,
+  })
+  notifications: string[];
 }
-
-export class UpdateNotificationDto extends PartialType(CreateNotificationDto) {}
 
 export class paginationDto {
     @ApiPropertyOptional({

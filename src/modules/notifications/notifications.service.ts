@@ -3,7 +3,7 @@ import { CreateNotificationDto, UpdateNotificationDto } from './dto/resquests.dt
 import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { Repository } from 'typeorm';
-import { TokenBlacklist } from '../auth/entities/blacklist.entity';
+import { TokenBlacklist } from './entities/blacklist.entity';
 import { NotificationQueryResponseDto } from './dto/responses.dto';
 import { NOT_FOUND_404 } from 'src/helpers/exceptions/auth';
 
@@ -21,7 +21,6 @@ export class NotificationsService {
     try{
       const newNotification = new Notification();
       newNotification.user_id = createNotificationDto.user_id;
-      newNotification.profile = createNotificationDto.profile;
       newNotification.message = createNotificationDto.message;
 
       const newRservationObj = await this.notificationRepository.save(newNotification);
@@ -39,6 +38,9 @@ export class NotificationsService {
     const offset = (page - 1) * limit
     try{
       const [notifications, totalCount] = await this.notificationRepository.findAndCount({
+        where: {
+          user_id: search
+        },
         skip: offset,
         take: limit
       }) 
@@ -53,10 +55,10 @@ export class NotificationsService {
     }
   }
 
-  async findOne(id: string): Promise<Notification>{
+  async findOne(id: string, user_id: string): Promise<Notification>{
     try{
       const notificationObj = await this.notificationRepository.findOne({
-        where: {id}
+        where: {id, user_id}
       })
 
       if (!notificationObj) {
@@ -74,11 +76,11 @@ export class NotificationsService {
     }
   }
 
-  async update(id: string, updateNotificationDto: UpdateNotificationDto) {
+  async update(id: string, user_id: string, updateNotificationDto: UpdateNotificationDto) {
     try {
       
       const notificationObj = await this.notificationRepository.findOne({
-        where: {id}
+        where: {id, user_id}
       })
 
       if (!notificationObj) {
@@ -120,6 +122,28 @@ export class NotificationsService {
 
       await this.notificationRepository.remove(notificationObj);
 
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async blacklistToken(token: string) {
+    try {
+
+      const blackToken = await this.blacklistRepository.findOne({
+        where: {token}
+      });
+    
+      if (!blackToken) {
+        return "Token blacklisted already";
+      };
+
+      const newBlackToken = new TokenBlacklist();
+      newBlackToken.token = token;
+  
+      await this.blacklistRepository.save(newBlackToken);
+      
+      return "Token blacklisted successfully"
     } catch (error) {
       throw error
     }

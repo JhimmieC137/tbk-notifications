@@ -7,15 +7,11 @@ import { baseConfig } from './settings/base.config';
 import { dataSourceOptions } from './settings/dataSource.config';
 import { dbConfig } from './settings/db.config';
 import { RouterModule } from '@nestjs/core';
-import { AuthModule } from './modules/auth/auth.module';
-import { UserModule } from './modules/users/user.module';
 import { appRoutes } from './helpers/router';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
-    AuthModule,
-    UserModule,
     NotificationsModule,
     RouterModule.register([
       ...appRoutes

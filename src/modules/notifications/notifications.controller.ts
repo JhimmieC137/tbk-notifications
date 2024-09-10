@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Request, Query, UseGuards, Head } from '@nestjs/common';
 import { NotificationsService } from './notifications.service';
 import { CreateNotificationDto, NotificationQueryDto, UpdateManyNotificationsDto, UpdateNotificationDto } from './dto/resquests.dto';
 import { CustomInfoResDto, CustomListResDto, CustomResDto } from 'src/helpers/schemas.dto';
@@ -28,6 +28,11 @@ export class NotificationsController {
       throw error
     }
 
+  }
+
+  @Head("health")
+  async getHealth(): Promise<Boolean>{
+    return true;
   }
 
   @EventPattern('create-notification')
